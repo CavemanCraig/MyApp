@@ -90,7 +90,7 @@
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:datasources:1.0">
             <datasources>
-                <datasource jndi-name="java:jboss/datasources/ExampleDS" enabled="true" use-java-context="true" pool-name="H2DS">
+                <datasource jndi-name="java:jboss/datasources/ExampleDS" enabled="false" use-java-context="true" pool-name="H2DS">
                     <connection-url>jdbc:h2:${jboss.server.data.dir}/test;DB_CLOSE_DELAY=-1</connection-url>
                     <driver>h2</driver>
                     <security>
@@ -98,12 +98,12 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:jboss/datasources/MysqlDS" enabled="${mysql.enabled}" use-java-context="true" pool-name="MysqlDS">
-                    <connection-url>jdbc:mysql://${env.OPENSHIFT_DB_HOST}:${env.OPENSHIFT_DB_PORT}/${env.OPENSHIFT_GEAR_NAME}</connection-url>
+                <datasource jndi-name="java:jboss/datasources/MysqlDS" enabled="true" use-java-context="true" pool-name="MysqlDS">
+                    <connection-url>jdbc:mysql://127.12.77.129:3306/MyApp</connection-url>
                     <driver>mysql</driver>
                     <security>
-                      <user-name>${env.OPENSHIFT_DB_USERNAME}</user-name>
-                      <password>${env.OPENSHIFT_DB_PASSWORD}</password>
+                      <user-name>admin</user-name>
+                      <password>ZFrnL4n6JviT</password>
                     </security>
                 </datasource>
                 <datasource jndi-name="java:jboss/datasources/PostgreSQLDS" enabled="${postgresql.enabled}" use-java-context="true" pool-name="PostgreSQLDS" use-ccm="true">
