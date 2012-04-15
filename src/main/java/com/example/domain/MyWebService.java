@@ -256,6 +256,29 @@ public class MyWebService {
 		System.out.println("Returning Player: " + foundPlayer);
 		return foundPlayer;
 	}// playerPOSTRequest
+	
+
+	// Removes an existing Player if that FacebookID exists
+	// Returns a String of "Player removed with FacbookID: ####"
+	// Or String of "No removal - No player found with FacebookID: #####"
+	@POST
+	@Path("/PlayerRemovalRequest/{facebookID}/")
+	@Consumes("application/json")
+	public String playerRemovalRequest(@PathParam("facebookID") long facebookID) {
+		System.out.println("POST on a Player Removal Request for Player facebookID: ["
+				+ facebookID + "]");
+
+		Player foundPlayer = null;
+		foundPlayer = getPlayerByFacebookID(em, facebookID);
+
+		if (null == foundPlayer) {
+			return "No removal - No player found with FacebookID: " + facebookID;
+		} else {
+			em.remove(foundPlayer);
+			em.flush();
+			return "Player removed with FacbookID: " + facebookID;
+		}
+	}// playerRemovalRequest
 
 	// Performs validation on answers submitted, and adjust points.
 	@POST
@@ -359,7 +382,7 @@ public class MyWebService {
 
 	// Return a User object, or null if no User exists with FacebookID. Returns
 	// null and logs an error if multiple User have that same ID
-	public static User getUserByFacebookID(EntityManager em, long facebookID) {
+	public User getUserByFacebookID(EntityManager em, long facebookID) {
 		User returnUser = null;
 		try {
 
@@ -392,7 +415,7 @@ public class MyWebService {
 		}
 	}// getPlayerByFacebookID
 
-	public static void UpdateFriendsListForPlayer(EntityManager em,
+	public void UpdateFriendsListForPlayer(EntityManager em,
 			Player player, ArrayList<Long> friendIDs,
 			ArrayList<String> friendNames, ArrayList<String> friendImageURLs) {
 		// Since it's not that much data, and for simplicity sake we're just
@@ -442,7 +465,7 @@ public class MyWebService {
 		em.persist(player);
 	}
 
-	private String resolveURL(long facebookID) {
+	public String resolveURL(long facebookID) {
 		return "http://graph.facebook.com/" + facebookID + "/picture";
 	}
 
@@ -511,7 +534,7 @@ public class MyWebService {
 		return outputLink;
 	}
 
-	private String printList(ArrayList list) {
+	private String printList(@SuppressWarnings("rawtypes") ArrayList list) {
 		String output = "";
 		for (Object object : list) {
 			output += object + ",";
