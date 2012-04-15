@@ -262,8 +262,8 @@ public class MyWebServiceTest {
 		
 		//Submit 3 incorrect answers to our WebService as a POST request
 		String targetURL = "http://localhost:8080/MyApp/rest/webService/GameAnswers/" + 
-				"1005/67890/76543/89012/Four%20Friend/Five%20Friend/One%20Friend";
-		String JSONInput = "";
+				"1005/67890/76543/89012";
+		String JSONInput = "[\"" + "Four Friend" + "\",\"" + "Five Friend" + "\",\"" + "One Friend" + "\"]";
 		String response = TestUtils.doPOST(targetURL, JSONInput);
 		
 		//Test that we get the correct String back from the incorrect answers and our points were deducted
@@ -289,8 +289,8 @@ public class MyWebServiceTest {
 		
 		//Submit 3 correct answers to our WebService as a POST request
 		String targetURL = "http://localhost:8080/MyApp/rest/webService/GameAnswers/" +
-				"1005/67890/76543/89012/One%20Friend/Two%20Friend/Three%20Friend";
-		String JSONInput = "";
+				"1005/67890/76543/89012";
+		String JSONInput = "[\"" + "One Friend" + "\",\"" + "Two Friend" + "\",\"" + "Three Friend" + "\"]";
 		String response = TestUtils.doPOST(targetURL, JSONInput);
 		
 		//Test that we get the correct String back from the incorrect answers and our points were deducted
@@ -306,4 +306,32 @@ public class MyWebServiceTest {
 		Assert.assertTrue(playerWith5Friends.getPoints()==(playerPointsOriginal + 30));
 	}
 	
+	@Test
+	public void testSubmitAllBlankAnswers(){
+		Player playerWith5Friends = TestUtils.getPlayer(1005);
+		
+		//Take note of the player's points before they submit the blank answers
+		long playerPointsOriginal = playerWith5Friends.getPoints();
+		
+		//Submit 3 incorrect answers to our WebService as a POST request
+		String targetURL = "http://localhost:8080/MyApp/rest/webService/GameAnswers/" + 
+				"1005/67890/76543/89012";
+		String JSONInput = "[\"" + "\",\"" + "\",\"" + "\"]";
+		String response = TestUtils.doPOST(targetURL, JSONInput);
+		
+		//Test that we get the correct String back from the blank answers and our points were deducted
+		String expectedResponse = "First entry was INCORRECT "
+				+ "Second entry was INCORRECT "
+				+ "Third entry was INCORRECT "
+				+ "You will have a total of [" + 30
+				+ "] points deducted.";
+		
+		System.out.println("\n\n\n\n\n\n response: " + response);
+		System.out.println("\n\n\n\n\n\n");
+
+		//Re-GET the player now that the score should be updated
+		playerWith5Friends = TestUtils.getPlayer(1005);
+		Assert.assertTrue(response.equals(expectedResponse));
+		Assert.assertTrue(playerWith5Friends.getPoints()==(playerPointsOriginal - 30));
+	}
 }
