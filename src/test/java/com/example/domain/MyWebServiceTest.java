@@ -313,7 +313,7 @@ public class MyWebServiceTest {
 		//Take note of the player's points before they submit the blank answers
 		long playerPointsOriginal = playerWith5Friends.getPoints();
 		
-		//Submit 3 incorrect answers to our WebService as a POST request
+		//Submit 3 blank answers to our WebService as a POST request
 		String targetURL = "http://localhost:8080/MyApp/rest/webService/GameAnswers/" + 
 				"1005/67890/76543/89012";
 		String JSONInput = "[\"" + "\",\"" + "\",\"" + "\"]";
