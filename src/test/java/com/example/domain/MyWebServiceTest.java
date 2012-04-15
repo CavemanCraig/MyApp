@@ -120,7 +120,7 @@ public class MyWebServiceTest {
        	Assert.assertTrue(response.equals("Player removed with FacbookID: 1010"));
     }
 
-    @Test
+    //@Test
     public void testSetupData(){
 	//Retrieve the sample data from our database and make sure it's what we expect
 		
@@ -141,12 +141,12 @@ public class MyWebServiceTest {
     	Assert.assertTrue(twoFriend.getName().equals("Two Friend"));
     }
     
-    @Test
+    //@Test
     public void testIsDeployed() {
         Assert.assertNotNull(mywebservice);
     }
     
-    @Test
+    //@Test
 	public void testGameLinkForNotEnoughFriends(){
     	Player playerWith0Friends = TestUtils.getPlayer(1000);
 		
@@ -165,7 +165,7 @@ public class MyWebServiceTest {
 		Assert.assertTrue(playerWith4Friends.getGameLink() .getHref().equals("index.html"));
 	}
     
-    @Test
+    //@Test
 	public void testGameLinkForValidNumOfFriends(){
     	Player playerWith5Friends = TestUtils.getPlayer(1005);
 		
@@ -251,6 +251,59 @@ public class MyWebServiceTest {
 	    	 list.add((String) tokens.nextElement());
 	     }
 	     return list;
+	}
+	
+	@Test
+	public void testSubmitAllWrongAnswers(){
+		Player playerWith5Friends = TestUtils.getPlayer(1005);
+		
+		//Take note of the player's points before they submit the wrong answers
+		long playerPointsOriginal = playerWith5Friends.getPoints();
+		
+		//Submit 3 incorrect answers to our WebService as a POST request
+		String targetURL = "http://localhost:8080/MyApp/rest/webService/GameAnswers/" + 
+				"1005/67890/76543/89012/Four%20Friend/Five%20Friend/One%20Friend";
+		String JSONInput = "";
+		String response = TestUtils.doPOST(targetURL, JSONInput);
+		
+		//Test that we get the correct String back from the incorrect answers and our points were deducted
+		String expectedResponse = "First entry was INCORRECT "
+				+ "Second entry was INCORRECT "
+				+ "Third entry was INCORRECT "
+				+ "You will have a total of [" + 30
+				+ "] points deducted.";
+		
+		//Re-GET the player now that the score should be updated
+		playerWith5Friends = TestUtils.getPlayer(1005);
+		Assert.assertTrue(response.equals(expectedResponse));
+		Assert.assertTrue(playerWith5Friends.getPoints()==(playerPointsOriginal - 30));
+	}
+	
+
+	@Test
+	public void testSubmitAllCorrectAnswers(){
+		Player playerWith5Friends = TestUtils.getPlayer(1005);
+		
+		//Take note of the player's points before they submit the correct answers
+		long playerPointsOriginal = playerWith5Friends.getPoints();
+		
+		//Submit 3 correct answers to our WebService as a POST request
+		String targetURL = "http://localhost:8080/MyApp/rest/webService/GameAnswers/" +
+				"1005/67890/76543/89012/One%20Friend/Two%20Friend/Three%20Friend";
+		String JSONInput = "";
+		String response = TestUtils.doPOST(targetURL, JSONInput);
+		
+		//Test that we get the correct String back from the incorrect answers and our points were deducted
+		String expectedResponse = "First entry was correct "
+				+ "Second entry was correct "
+				+ "Thrid entry was correct "
+				+ "You will have a total of [" + 30
+				+ "] points added!";
+		
+		//Re-GET the player now that the score should be updated
+		playerWith5Friends = TestUtils.getPlayer(1005);
+		Assert.assertTrue(response.equals(expectedResponse));
+		Assert.assertTrue(playerWith5Friends.getPoints()==(playerPointsOriginal + 30));
 	}
 	
 }
